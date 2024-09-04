@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // mongoose.connect('mongodb://127.0.0.1:27017/paytm');
 
-mongoose.connect("mongodb+srv://admin:3EWStEPyz4KwEyLE@cluster0.nbknzly.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+mongoose.connect("mongodb+srv://admin:password@cluster0.nbknzly.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ); 
 
 const bcrypt = require('bcrypt');   
