@@ -5,7 +5,10 @@ import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 export const PaymentPage = () => {
+    const token = localStorage.getItem('token')
+
     const location = useLocation();
+
     const{userId, fullname} =  location.state;
     console.log("fullname is ", fullname);
 
@@ -17,26 +20,34 @@ export const PaymentPage = () => {
     };
 
     const handleSubmit = async () => {
-        // try {
-        //     const response = await axios.post("http://localhost:3000/api/v1/account/transfer", { toId: userId, amount });
-        //     console.log(response.data);
-        //     toast.success('Payment successful!');
-        //     setModalIsOpen(true);
+        try {
+            const response = await axios.post("http://localhost:3000/api/v1/account/transfer", { toId: userId, amount }
 
-        //     // Redirect after a delay
-        //     setTimeout(() => {
-        //         setModalIsOpen(false);
-        //         navigate("/dashboard");
-        //     }, 3000); // Redirect after 3 seconds
-        // } catch (error) {
-        //     if (error.response && error.response.data) {
-        //         console.error("Error response data:", error.response.data.message);
-        //         toast.error(`Error: ${error.response.data.message}`);
-        //     } else {
-        //         console.error("Error:", error.message);
-        //         toast.error(`Error: ${error.message}`);
-        //     }
-        // }
+                ,
+                {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+
+            );
+            console.log(response.data);
+            toast.success('Payment successful!');
+            setModalIsOpen(true);
+
+            setTimeout(() => {
+                setModalIsOpen(false);
+                navigate("/dashboard");
+            }, 3000);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                console.error("Error response data:", error.response.data.message);
+                toast.error(`Error: ${error.response.data.message}`);
+            } else {
+                console.error("Error:", error.message);
+                toast.error(`Error: ${error.message}`);
+            }
+        }
 
         toast.success('Payment successful!');
         setModalIsOpen(true);

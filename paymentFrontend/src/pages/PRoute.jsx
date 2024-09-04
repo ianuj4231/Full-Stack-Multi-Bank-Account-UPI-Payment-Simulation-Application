@@ -8,7 +8,8 @@ const PRoute = () => {
     
     useEffect(()=> {
         // Boolean(!state) && nav('/signup')
-
+        console.log(" state in proute is : ", state);
+        
         if(!state){
           nav("/signup");
         }

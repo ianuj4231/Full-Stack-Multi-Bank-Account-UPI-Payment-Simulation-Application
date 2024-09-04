@@ -75,7 +75,7 @@ try{
         // let sender_list_final = sender_account_obj_final.banks;
         // console.log(sender_account_obj_final.currentPrimaryBankId);
         // let sender_primary_bank_final_data  = sender_list_final.find(x => x.bankId.toString() === sender_account_obj.currentPrimaryBankId.toString())
-        //let sender_primary_bank_final_data_balance =  sender_primary_bank_final_data.balance;
+        // let sender_primary_bank_final_data_balance =  sender_primary_bank_final_data.balance;
         // let all_users_list = await Account.find();
         // let recobj = all_users_list.find(x=> x.userId.toString() ===  toId  )
         // let banksof1userlist = recobj.banks;   

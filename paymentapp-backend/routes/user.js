@@ -31,6 +31,8 @@ router.post('/signup', zodMiddleware, signupMiddleware, async function (req, res
         };
 
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '2h' });
+        console.log("token is " , token);
+        
         console.log("User created, id:", obj._id);
         await Account.create({
             userId: obj._id,
@@ -157,7 +159,7 @@ router.put("/makePrimaryBank", customerJwtMiddleware, async function (req, res) 
         return res.status(403).json({ message: "you dont have an account in this bank" });
     }
     await Account.updateOne({ userId: req.user.userId }, { "$set": { currentPrimaryBankId: req.body.bankId } });
-    res.json({ message: "updated primary bank" })
+    res.json({ message: "updated primary bank"})
 })
 
 router.get("/getBalance", customerJwtMiddleware, async function (req, res, next) {

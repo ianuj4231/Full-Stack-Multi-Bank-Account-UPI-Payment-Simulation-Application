@@ -3,8 +3,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Signup  from './pages/Signup'
-import { ToastContainer } from 'react-toastify'; // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { CustomerDashboard } from './pages/CustomerDashboard'
@@ -18,7 +18,7 @@ function App() {
     <>  
         <BrowserRouter>
             <Routes>
-                      <Route  path='/signup' element={<Signup />}  > </Route>  
+                      <Route  path='/' element={<Signup />}  > </Route>  
                       
                       <Route element={<PRoute/> }>
                       <Route  path='/customerDashboard' element={<CustomerDashboard />}>  </Route>  

@@ -15,12 +15,20 @@ const userSchema = zod.object({
 })
 async function zodMiddleware(req, res, next) {
     const { username, password, firstname, lastname, bankId } = req.body;
+    // console.log(req.body);
     
     try {
         const result =userSchema.safeParse( { username, password, firstname, lastname});
     
         if(result.success){
             next();
+        }
+        else{
+            console.log(
+                
+                "result is ", result
+            );
+            
         }
         }
      catch (error) {
@@ -29,6 +37,8 @@ async function zodMiddleware(req, res, next) {
     }
 }
 async function signupMiddleware(req, res, next) {
+    console.log(req.body);
+    
     try {
         const obj = await User.findOne({ username: req.body.username });
         console.log(obj);
@@ -72,7 +82,8 @@ async function customerJwtMiddleware(req, res, next) {
     try {
         let token = req.headers.authorization?.split(" ")[1];
         console.log("xxtoken");
-
+            console.log("token in here is ", token);
+            
         if (!token) {
             return res.status(401).json({ message: "No token sent from frontend or logged out" });
         }

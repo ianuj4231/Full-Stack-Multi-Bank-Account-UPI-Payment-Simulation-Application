@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { listofbanks } from '../bankData';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 let changes = false;
 export default function Signup() {
     console.log("cllaed")
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
 
     const [isSigninClicked, setIsSigninClicked] = useState(false);
     const [isAlert, setIsAlert] = useState(false);
@@ -22,16 +22,16 @@ export default function Signup() {
     })
     useEffect(() => {
         let timerId;
-        if( changes ){
+        if (changes) {
 
-            timerId =  setTimeout(() => {
-            changes = false
-                 setIsAlert( (prev) => !prev)
-     
-             }, 2000);
+            timerId = setTimeout(() => {
+                changes = false
+                setIsAlert((prev) => !prev)
+
+            }, 2000);
         }
         return () => clearTimeout(timerId)
-    },[isAlert])
+    }, [isAlert])
     function isSigninClickedFn() {
         setIsSigninClicked(true);
         setIsSignupClicked(false);
@@ -52,6 +52,7 @@ export default function Signup() {
 
     function handleSubmitSignup(e) {
         e.preventDefault();
+        console.log(signupFormData);
 
         fetch("http://localhost:3000/api/v1/user/signup", {
             method: "POST",
@@ -77,6 +78,9 @@ export default function Signup() {
                 console.log("Signup successful:", data);
                 // localStorage.setItem("username", username);
                 toast.success('Signup successful!');
+                localStorage.setItem("token", data.token)
+                let tokenxx = localStorage.getItem("token");
+                console.log("tokenxx ", tokenxx);
                 navigate("/customerDashboard")
             })
             .catch(err => {
@@ -105,28 +109,31 @@ export default function Signup() {
      }
  
      */
-function handleForm (e){
-    e.preventDefault()
-    const formData = new FormData(e.target);
-    console.log(formData)
-    if(formData.get('username') =='' || formData.get('password') == '') {
-        changes = true
-        setIsAlert(true)
-        return
+    function handleForm(e) {
+        e.preventDefault()
+        const formData = new FormData(e.target);
+        console.log(formData)
+        if (formData.get('username') == '' || formData.get('password') == '') {
+            changes = true
+            setIsAlert(true)
+            return
+        }
+        else {
+            handleSubmitSignin()
+        }
     }
-    else{
-        handleSubmitSignin()
-    }
-}
     async function handleSubmitSignin() {
         console.log(signinFormData);
         try {
             const response = await axios.post("http://localhost:3000/api/v1/user/signin", signinFormData);
             console.log(response.data);
             toast.success('Signin successful!');
-            localStorage.setItem( "token" , response.data.token)
-            localStorage.setItem( "username" ,signinFormData.username)
-                
+            localStorage.setItem("token", response.data.token)
+            let tokenxx = localStorage.getItem("token");
+            console.log("tokenxx ", tokenxx);
+
+            localStorage.setItem("username", signinFormData.username)
+
             navigate("/customerDashboard")
 
             // localStorage.setItem("username", username);
@@ -145,6 +152,12 @@ function handleForm (e){
 
     return (
         <div>
+            <div style={{ fontWeight: 'bold' }}>
+                Full-Stack Multi-Bank Account UPI Payment Simulation Application
+            </div>
+            <br />
+
+
             <div>
                 <span >
                     <button style={{ fontSize: "16.5px" }} onClick={isSignupClickedFn}>--signup-- </button>
@@ -199,16 +212,16 @@ function handleForm (e){
                     {
                         isSigninClicked && <div>
                             <form action="" onSubmit={handleForm}>
-                            <br></br>
-                            <br></br>
-                            <input type="email" required onChange={handleChangeSignin} name="username" value={signinFormData.username} placeholder='enter username' />
-                            <br></br>
-                            <br></br>
+                                <br></br>
+                                <br></br>
+                                <input type="email" required onChange={handleChangeSignin} name="username" value={signinFormData.username} placeholder='enter username' />
+                                <br></br>
+                                <br></br>
 
-                            <input type="password" onChange={handleChangeSignin} name="password" value={signinFormData.password} placeholder='enter password' />
-                            <br></br>
-                            <br></br>
-                            <button  type='submit' > signin </button>
+                                <input type="password" onChange={handleChangeSignin} name="password" value={signinFormData.password} placeholder='enter password' />
+                                <br></br>
+                                <br></br>
+                                <button type='submit' > signin </button>
                             </form>
                             {isAlert && <h1> Please fill all details</h1>}
                         </div>

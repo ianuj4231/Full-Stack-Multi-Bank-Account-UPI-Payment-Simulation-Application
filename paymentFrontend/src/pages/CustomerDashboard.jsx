@@ -71,7 +71,10 @@ export function CustomerDashboard() {
 
 <div>
             <div>
-                       --Welcome, {localStorage.getItem("username")}--
+                  <span style={{ fontWeight: 'bold' }}>  --Welcome, {localStorage.getItem("username")}--  </span>    
+                  <span>
+                                <button onClick={handleManage}>  Manage Bank Accounts </button>
+                    </span>
                         <br>
                         </br>
                         <br>
@@ -97,9 +100,7 @@ export function CustomerDashboard() {
                 }
 
                 </span >   
-                    <span>
-                                <button onClick={handleManage}>  Manage Bank Accounts </button>
-                    </span>
+                    
  </div>
     );
 }

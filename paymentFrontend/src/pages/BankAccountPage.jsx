@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "../config";
-import {listofbanks} from "../bankData"
+import { listofbanks } from "../bankData"
 export function BankAccountPage() {
     console.log("listofbanks ", listofbanks);
-    
     const [banks, setBanks] = useState([]);
     // axios.defaults.baseURL = 'http://localhost:3000/api/v1/';
-    const[currentPrimaryBankId, setCurrentPrimaryBankId]  = useState("");
+    const [currentPrimaryBankId, setCurrentPrimaryBankId] = useState("");
     const token = localStorage.getItem('token')
-    
+    const [unlinkedBanks, setUnlinkedBanks] = useState([]);
+
     const fetchData = async () => {
         try {
             const response = await axios.get("user/getAllBanksOf1User",
-                {   
-                    data: { },
+                {
+                    data: {},
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
@@ -26,11 +26,15 @@ export function BankAccountPage() {
             console.log("error fetching banks");
         }
     };
-    
+
     useEffect(() => {
         fetchData();
     }, []);
-    
+
+    useEffect(() => {
+        const newUnlinkedBanks = listofbanks.filter(x => !banks.some(bank => bank.bankId === x.bankId));
+        setUnlinkedBanks(newUnlinkedBanks);
+    }, [listofbanks, banks]);
 
     // useEffect(()=>{
     //             console.log(" before fetching curr primary  ", banks );
@@ -48,89 +52,109 @@ export function BankAccountPage() {
     // }, [banks])
 
 
-useEffect(()=>{
-    (async () => {
-        const response = await axios.get("user/getCurrPrimary", {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }}
-         );
-         setCurrentPrimaryBankId(response.data.currentPrimaryBankId)
-         console.log(response.data);  
-    })();
-}, [banks])
-    
-    async function removeBank(bankIdx){
-        try{
-            const response = await axios.delete("user/removeAccount", 
+    useEffect(() => {
+        (async () => {
+            const response = await axios.get("user/getCurrPrimary", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+            );
+            setCurrentPrimaryBankId(response.data.currentPrimaryBankId)
+            console.log(response.data);
+        })();
+    }, [banks])
+
+    async function removeBank(bankIdx) {
+        try {
+            const response = await axios.delete("user/removeAccount",
                 {
                     headers: {
-                      Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     },
                     data: {
-                      bankId: bankIdx 
+                        bankId: bankIdx
                     }
-                  }
-            );            
+                }
+            );
             console.log("bank account removed", response.data);
-            setBanks( (prev) => prev.filter(bank => bank.bankId !== bankIdx ));
+            setBanks((prev) => prev.filter(bank => bank.bankId !== bankIdx));
         }
-        catch(error){
+        catch (error) {
             console.log(error);
         }
     }
-//   function handleAddBankAccount(bankId, bankname){
+    //   function handleAddBankAccount(bankId, bankname){
 
-//   }
-async function handleAddBankAccount(bankId, bankname) {
-    try {
-        const response = await axios.put(
-            "user/addBankAccount",
-            { bankId },  
-            {   
-                headers: { "Authorization": `Bearer ${token}` }  
+    //   }
+    async function handleAddBankAccount(bankId, bankname) {
+        try {
+            const response = await axios.put(
+                "user/addBankAccount",
+                { bankId },
+                {
+                    headers: { "Authorization": `Bearer ${token}` }
+                }
+            );
+            console.log(response.data);
+            setBanks(prev => [...prev, { bankId, bankname }]);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+  async function handleMakePrimary(bankId) {
+            try {
+                const response = await axios.put(
+                    "user/makePrimaryBank",
+                    { bankId },
+                    {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    }
+                );
+                console.log(response.data);
+                setCurrentPrimaryBankId(bankId);
+
+            } catch (error) {
+                
             }
-        );
-        console.log(response.data);
-        setBanks(prev => [...prev, { bankId, bankname }]);
-    } catch (error) {
-        console.log(error);
-    }                
-}
+    }
 
-function handleMakePrimary(){
+    return (
+        <div>
 
-}
+                
 
-        return (
-                    <div>
+            <div style={{ fontWeight: 'bold',  marginBottom: '1em' }}>Below is the list of linked bank accounts: </div>
+                
+            <>
+                {banks.map((x) =>
+                (
+                    <div key={x.bankId}>
+                        --{x.bankname}-- {x.bankId === currentPrimaryBankId ?  <span style={{ fontWeight: 'bold'}} > Primary-- </span>  :
 
-                        <>
-                                {banks.map( (x) => 
-                                    (
-                                        <div key={x.bankId}>
-                                                        --{x.bankname}-- {x.bankId===currentPrimaryBankId ? "Primary--" :
-                                                        
-                                                             <button onClick={handleMakePrimary}>  make primary </button> 
-                                                        }    
-                                                <button onClick={()=> removeBank(x.bankId)} >  Remove Bank </button>
-                                                
-                                        </div>
-                                    )
-                                )}
-                        </>
-
-                        <br></br>
-
-                       <div>
-                                        Below is the list of unlinked bank accounts:
-                                        <br></br>
-                                        {listofbanks.map(x=> <div>   {x.bankname}  --- 
-                                                            <button onClick={()=> handleAddBankAccount(x.bankId, x.bankname)}> AddBankAccount </button>
-
-                                              </div>)}
-                       </div>
+                            <button onClick={()=>handleMakePrimary(x.bankId)}>  make primary </button>
+                        }
+                        <button onClick={() => removeBank(x.bankId)} >  Remove Bank </button>
 
                     </div>
-        );
+                )
+                )}
+            </>
+
+            <br></br>
+            <br></br>        <br></br>
+            <div>  <div  style={{ fontWeight: 'bold' }}>  Below is the list of unlinked bank accounts: </div>
+
+                <br></br>        <br></br>
+                {unlinkedBanks.map(x => (
+                    <div key={x.bankId}>
+                        {x.bankname} ---
+                        <button onClick={() => handleAddBankAccount(x.bankId, x.bankname)}>Add Bank Account</button>
+                    </div>
+                ))}
+            </div>
+
+        </div>
+    );
 }
